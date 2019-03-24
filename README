@@ -1,0 +1,30 @@
+Tema 1 PC - mini kermit
+Radu Cervinschi
+321CC
+
+In lib.h am scris o functie de incrementare a secventei de pachet, pe care o folosesc si senderul si receiverul.
+
+In sender, functia send_and_wait trimite un pachet si asteapta raspunsul. Singurele conditii de iesire din asteptare sunt: ACK cu secventa potrivita sau 3 pachete pierdute consecutiv. In cazul in care nu primesc raspuns, sau primesc NAK retrimit pachetul. Nu intrerup transmisia in cazul in care 3 pachete sunt corupte, dar trimise.
+
+Am folosit ca atare toate datele care au fost considerate implicite (ex: TIME - 5000, EOL - 0x0D, MAXL - 250 etc.), pentru usurinta de implementare a modelului nostru mini.
+
+In sender trimit pachetul initial, intr-un for trimit headerele, datele si sfarsitul de fisiere, pentru fiecare fisier, iar apoi trimit sfarsitul de transmisie.
+
+S = =
+| F =
+| | D
+| | D
+| Z =
+| F =
+| | D
+| Z =
+| F =
+| | D
+| | D
+| | D
+| | D
+| Z =
+B = =
+
+In receiver astept pachetul initial, iar apoi toate pachetele le primesc intr-o bucla infinita. Se termina executia in cazul a 3 timeout-uri consecutive(si se inchid si eventualele fisiere deschise), sau in cazul pachetului de tip B primit corect.
+In while se verifica daca nu este pierdut pachetul. Apoi se verifica secventa. In cazul secventei gresite se retrimite confirmarea pentru ultimul pachet. Dupa secventa se verifica daca datele au fost corupte si se trimite NAK / ACK. In cazul in care era bine se verifica tipul. Pentru file header se deschide fisierul cu numele corect. In pachete data se scrie in fisier, iar in pachete end of file se inchide fisierul. La pachetele end of transmission, pur si simplu se incheie executia receiverului(ack este transmis inainte de tratarea datelor din pachet).
